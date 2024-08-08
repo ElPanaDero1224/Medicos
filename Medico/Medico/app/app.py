@@ -7,24 +7,30 @@ app = Flask(__name__)
 # Configuración de la conexión a MySQL
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'tu_password'
-app.config['MYSQL_DB'] = 'flask_db'
+app.config['MYSQL_PASSWORD'] = 'Es_el_de_halo_5'
+app.config['MYSQL_DB'] = 'medicos'
 
-# Inicialización de MySQL
+app.secret_key='mysecretkey'
+
 mysql = MySQL(app)
 
-# Verificación de la conexión a la base de datos
-try:
-    # Intentamos establecer la conexión
-    cursor = mysql.connection.cursor()
-    cursor.execute('SELECT 1')  # Simple consulta para verificar la conexión
-    connection_status = "Conectado a la base de datos MySQL"
-except MySQLdb.Error as e:
-    connection_status = f"No se pudo conectar a la base de datos MySQL: {e}"
+if mysql:
+    print('Conexion establecida')
 
+else:
+    print('No hay conexion')
+
+
+
+#--------------------------------------------------------------------------------------------------------
+#<Routa de inicio de sesion>
 @app.route('/')
 def index():
-    return connection_status
+    return render_template('index.html')
+#--------------------------------------------------------------------------------------------------------
+
+
+
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=3000, debug=True)
