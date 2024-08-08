@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Registro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+        }
+        .form-row .form-group {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .form-row .form-group:last-child {
+            margin-right: 0;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+        .form-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-actions button.save {
+            background-color: #000000;
+            color: #fff;
+        }
+        .form-actions button.cancel {
+            background-color: #000000;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <form id="registrationForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="rfc">RFC</label>
+                    <input type="text" id="rfc" name="rfc" required placeholder="RFC">
+                </div>
+                <div class="form-group">
+                    <label for="name">Nombre</label>
+                    <input type="text" id="name" name="name" required placeholder="Nombre">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">Correo</label>
+                <input type="email" id="email" name="email" required placeholder="Correo">
+            </div>
+            <div class="form-group">
+                <label for="cedula">Cédula</label>
+                <input type="text" id="cedula" name="cedula" required placeholder="Cédula">
+            </div>
+            <div class="form-group">
+                <label for="rol">Rol</label>
+                <input type="text" id="rol" name="rol" required placeholder="Rol"> 
+            </div>
+            <div class="form-group">
+                <label for="acciones">Acciones</label>
+                <input type="text" id="acciones" name="acciones" required placeholder="Acciones">
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="save">Guardar</button>
+                <button type="button" class="cancel" onclick="document.getElementById('registrationForm').reset();">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

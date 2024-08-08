@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interfaz de Usuario</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            width: 80%;
+            height: 80%;
+            display: flex;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .left, .right {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .left {
+            height: 100%;
+        }
+        .left img {
+            height: 100%;
+            width: auto;
+            object-fit: cover;
+        }
+        .right {
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .logo img {
+            max-width: 100px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .input-group button {
+            width: 100%;
+            padding: 8px;
+            background-color: #000000;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .input-group button:hover {
+            background-color: #333333;
+        }
+    </style>
+</head>
+<body>
+        <div class="left">
+            <img src="Captura de pantalla 2024-08-06 144421.png" alt="Imagen Lateral">
+        </div>
+        <div class="right">
+            <div class="logo">
+                <img src="logo.png" alt="Logo">
+            </div>
+            <div class="input-group">
+                <input type="text" placeholder="RFC">
+                <input type="password" placeholder="Contraseña">
+                <button>Ingresar</button>
+            </div>
+        </div>
+</body>
+</html>
