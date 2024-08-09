@@ -29,6 +29,11 @@ def index():
     return render_template('index.html')
 #--------------------------------------------------------------------------------------------------------
 
+
+
+
+#--------------------------------------------------------------------------------------------------------
+#iniciar sesion
 @app.route('/iniciar_Sesion', methods=['POST'])
 def iniciar_Sesion():
     if request.method == 'POST':
@@ -52,8 +57,12 @@ def iniciar_Sesion():
         else:
             # Manejo de error si no se encuentra el médico
             return 'Credenciales incorrectas', 401
+#--------------------------------------------------------------------------------------------------------
 
 
+
+#--------------------------------------------------------------------------------------------------------
+#Ruta para redirigir al inicio
 @app.route('/Home', methods=['GET'])
 def Home():
     if session:
@@ -61,14 +70,23 @@ def Home():
     else:
         return redirect(url_for('iniciar_Sesion'))
 
+#--------------------------------------------------------------------------------------------------------
 
 
+
+#--------------------------------------------------------------------------------------------------------
+#cerrar sesion
 @app.route('/cerrar_sesion', methods=['POST'])
 def cerrar_sesion():
     # Eliminar la variable de sesión
     session.pop('id_medicos', None)
     # Redirigir a la página de inicio
     return redirect(url_for('index'))
+#--------------------------------------------------------------------------------------------------------
+
+
+
+
 
 
 
