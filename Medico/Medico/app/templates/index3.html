@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabla de Citas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .search-bar label {
+            margin-right: 10px;
+        }
+
+        .search-bar select, .search-bar input {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .search-bar .search-button {
+            padding: 8px 16px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .search-bar .search-button:hover {
+            background-color: #444;
+        }
+
+        .appointments-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .appointments-table thead {
+            background-color: #f0f0f0;
+        }
+
+        .appointments-table th, .appointments-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .appointments-table tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .action-button {
+            padding: 8px 12px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .action-button:hover {
+            background-color: #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search-bar">
+            <label for="patient-name">Nombre del Paciente</label>
+            <select id="patient-name">
+                <option value="paciente">Paciente</option>
+            </select>
+
+            <label for="appointment-date">Fecha de Cita</label>
+            <input type="text" id="appointment-date" placeholder="Placeholder">
+
+            <button class="search-button">Buscar</button>
+        </div>
+
+        <table class="appointments-table">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Nombre del Paciente</th>
+                    <th>Diagnóstico</th>
+                    <th>Tratamiento</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>24/11/2024</td>
+                    <td>Pedro Perusquía</td>
+                    <td>Gripe</td>
+                    <td>Paracetamol</td>
+                    <td><button class="action-button">Reimprimir Receta</button></td>
+                </tr>
+              
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
