@@ -7,5 +7,10 @@
 <body>
     <h1>Bienvenido, Médico</h1>
     <p>ID del Médico: {{ id_medicos }}</p>
+
+    <!-- Botón para cerrar sesión -->
+    <form action="{{ url_for('cerrar_sesion') }}" method="POST">
+        <button type="submit">Cerrar Sesión</button>
+    </form>
 </body>
 </html>

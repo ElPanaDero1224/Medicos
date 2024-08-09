@@ -63,6 +63,14 @@ def Home():
 
 
 
+@app.route('/cerrar_sesion', methods=['POST'])
+def cerrar_sesion():
+    # Eliminar la variable de sesión
+    session.pop('id_medicos', None)
+    # Redirigir a la página de inicio
+    return redirect(url_for('index'))
+
+
 
 
 if __name__ == '__main__':
