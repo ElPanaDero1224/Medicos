@@ -71,18 +71,30 @@
     </style>
 </head>
 <body>
+
+<!-- Parte de la derecha-->
         <div class="left">
             <img src="../static/Captura%20de%20pantalla%202024-08-06%20144421.png" alt="Imagen Lateral">
         </div>
-        <div class="right">
-            <div class="logo">
-                <img src="../static/logo.png" alt="Logo">
-            </div>
-            <div class="input-group">
-                <input type="text" placeholder="RFC">
-                <input type="password" placeholder="Contraseña">
-                <button>Ingresar</button>
-            </div>
+
+<!-- Formulario para enviar-->
+       <form action="iniciar_Sesion" method="post">
+    <div class="right">
+        <div class="logo">
+            <img src="../static/logo.png" alt="Logo">
         </div>
+        <div class="input-group">
+
+            <label for="rfc">RFC:</label>
+            <input type="text" id=" rfc" name="rfc" placeholder="RFC" required>
+
+            <label for="password">Contraseña:</label>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <button type="submit">Ingresar</button>
+        </div>
+    </div>
+</form>
+
+
 </body>
 </html>
