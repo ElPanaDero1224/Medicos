@@ -56,7 +56,7 @@ def iniciar_Sesion():
 
 @app.route('/Home', methods=['GET'])
 def Home():
-    if session.get('id_medicos'):
+    if session:
         return render_template('Home.html', id_medicos=session['id_medicos'])
     else:
         return redirect(url_for('iniciar_Sesion'))
