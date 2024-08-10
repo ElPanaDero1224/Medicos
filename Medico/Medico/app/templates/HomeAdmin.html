@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Control - Usuario</title>
+    <title>Panel de Control - Administrador</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -73,16 +73,17 @@
             background-color: #81C784; /* Slightly darker pastel green */
         }
 
-        .appointments-table {
+        .medicos-table, .appointments-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
 
-        .appointments-table thead {
+        .medicos-table thead, .appointments-table thead {
             background-color: #f0f0f0;
         }
 
+        .medicos-table th, .medicos-table td,
         .appointments-table th, .appointments-table td {
             padding: 12px;
             text-align: left;
@@ -90,6 +91,7 @@
             border-radius: 8px;
         }
 
+        .medicos-table tbody tr:hover,
         .appointments-table tbody tr:hover {
             background-color: #f9f9f9;
         }
@@ -112,6 +114,14 @@
         .action-button:hover {
             background-color: #64B5F6; /* Slightly darker pastel blue */
         }
+
+        .delete-button {
+            background-color: #EF9A9A; /* Pastel red */
+        }
+
+        .delete-button:hover {
+            background-color: #E57373; /* Slightly darker pastel red */
+        }
     </style>
 </head>
 <body>
@@ -119,7 +129,9 @@
     <header>
         <nav>
             <ul>
-                <li><a href="{{ url_for('Home') }}">Expedientes</a></li>
+                <li><a href="{{ url_for('Home') }}">Médicos</a></li>
+                <li><a href="{{ url_for('Expedientes') }}">Expedientes</a></li>
+
                 <li>
                     <form action="{{ url_for('cerrar_sesion') }}" method="post" style="display:inline;">
                         <button type="submit">Cerrar Sesión</button>
@@ -130,29 +142,34 @@
     </header>
 
     <div class="container">
-        <h2>Lista de Pacientes</h2>
-        <button class="add-button" onclick="window.location.href='/AgregarPaciente'">Agregar Paciente</button>
-
-        <table class="appointments-table">
+        <!-- Lista de Médicos -->
+        <h2>Lista de Médicos</h2>
+        <form action="{{ url_for('AgregarMedicos') }}" style="display:inline;">
+            <button type="submit" class="add-button">Agregar Médico</button>
+        </form>
+        <table class="medicos-table">
             <thead>
                 <tr>
-                    <th>Fecha de nacimiento</th>
-                    <th>Nombre del Paciente</th>
-                    <th>Diagnóstico</th>
-                    <th>Tratamiento</th>
+                    <th>Nombre</th>
+                    <th>Apellido Paterno</th>
+                    <th>Apellido Materno</th>
+                    <th>RFC</th>
+                    <th>Rol</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-            {% for paciente in pacientes %}
+            {% for medico in medicos %}
             <tr>
-                <td>{{ paciente[4] }}</td>
-                <td>{{ paciente[1] }} {{ paciente[2] }} {{ paciente[3] }}</td>
-                <td>{{ paciente.diagnostico }}</td>
-                <td>{{ paciente.tratamiento }}</td>
+                <td>{{ medico[1] }}</td>
+                <td>{{ medico[2] }}</td>
+                <td>{{ medico[3] }}</td>
+                <td>{{ medico[4] }}</td>
+                <td>{{ medico[5] }}</td>
                 <td>
                     <div class="action-buttons">
                         <button class="action-button">Modificar</button>
+                        <button class="action-button delete-button">Borrar</button>
                     </div>
                 </td>
             </tr>

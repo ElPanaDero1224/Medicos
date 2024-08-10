@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, session, url_for, jsonify, send_file
 from flask_mysqldb import MySQL
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -62,20 +63,27 @@ def iniciar_Sesion():
 #--------------------------------------------------------------------------------------------------------
 
 
+
+
+
+
+
+
 #--------------------------------------------------------------------------------------------------------
 #Ruta para redirigir al inicio con los pacientes de cada medico al inicio
 @app.route('/Home', methods=['GET'])
 def Home():
     if 'id_medicos' in session:
         #para los admin
-        if session.get('admin_permision'):
+        if session.get('admin_permision') == 1:
             id_medicos = session['id_medicos']
             cursor = mysql.connection.cursor()
             cursor.execute('SELECT * FROM vw_medicos')
             medicos = cursor.fetchall()
-            return render_template('Home.html', id_medicos=id_medicos, medicos = medicos)
+            return render_template('HomeAdmin.html', id_medicos=id_medicos, medicos = medicos)
             pass
         #para el usuario comun
+
         else:
             id_medicos = session['id_medicos']
             cursor = mysql.connection.cursor()
@@ -93,36 +101,140 @@ def Home():
 
 
 #--------------------------------------------------------------------------------------------------------
-#Funcion dos en uno
+#Funcion dos en uno Agregar un medico y abrir la plantilla para ingresar un medico
+#Falta agregar lo de verificar contrasenia, no repetir RFC
 @app.route('/AgregarMedicos', methods=['GET', 'POST'])
 def AgregarMedicos():
-    if request.method == 'POST':
-        # Recoger los datos del formulario
-        rfc = request.form.get('rfc')
-        nombre = request.form.get('name')
-        email = request.form.get('email')
-        cedula = request.form.get('cedula')
-        rol_id = request.form.get('rol')
+    if session.get('admin_permision') == 1 and 'id_medicos' in session:
+        if request.method == 'POST':
+            nombre = request.form.get('name')
+            apellidosp = request.form.get('apellido_paterno')
+            apellidosm = request.form.get('apellido_materno')
+            correo = request.form.get('email')
+            contrasenia = request.form.get('contrasenia')
+            RFC = request.form.get('rfc')
+            idrol = request.form.get('rol')
+            adminp = request.form.get('tipo_usuario')
 
-        # Conectar a la base de datos e insertar los datos
+            # Conectar a la base de datos e insertar los datos
+            cursor = mysql.connection.cursor()
+            # Llamar al procedimiento almacenado
+            cursor.callproc('sp_RegistrarMedico', (nombre, apellidosp, apellidosm, correo, contrasenia, RFC, idrol, adminp))
+            # Confirmar la transacción
+            mysql.connection.commit()
+            # Cerrar el cursor
+            cursor.close()
+
+            return redirect(url_for('Home'))
+
+
+        # En caso de que la solicitud sea GET, mostrar el formulario
         cursor = mysql.connection.cursor()
-        query = '''
-            INSERT INTO medicos (RFC, nombres, correo, cedula, id_rol)
-            VALUES (%s, %s, %s, %s, %s);
-        '''
-        cursor.execute(query, (rfc, nombre, email, cedula, rol_id))
-        mysql.connection.commit()
+        cursor.execute('SELECT * FROM roles;')
+        roles = cursor.fetchall()
+        cursor.close()
+        return render_template('gMedicos.html', roles=roles)
+
+    elif 'id_medicos' in session:
+        return redirect(url_for('Home'))
+
+
+    else:
+        return redirect(url_for('index'))
+#--------------------------------------------------------------------------------------------------------
+
+#--------------------------------------------------------------------------------------------------------
+#Ruta para mostrar los expedientes siendo admin
+@app.route('/Expedientes', methods=['POST', 'GET'])
+def Expedientes():
+    if session.get('admin_permision') == 1 and 'id_medicos' in session:
+        id_medicos = session['id_medicos']
+        cursor = mysql.connection.cursor()
+        query = 'SELECT * FROM vw_pacientes;'
+        cursor.execute(query)
+        pacientes = cursor.fetchall()
         cursor.close()
 
-        # Redirigir a la página de médicos después de agregar
-        return redirect(url_for('gMedicos'))
+        return render_template('expedientesAd.html', id_medicos=id_medicos, pacientes=pacientes)
+    else:
+        return redirect(url_for('Home'))
 
-    # En caso de que la solicitud sea GET, mostrar el formulario
+
+#--------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+# --------------------------------------------------------------------------------------------------------
+# Funcion dos en uno
+@app.route('/AgregarPaciente', methods=['GET', 'POST'])
+def AgregarPaciente():
+    if 'id_medicos' not in session:
+        return redirect(url_for('index'))
+
     cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM roles;')
-    roles = cursor.fetchall()
+
+    if session.get('admin_permision') == 1:
+        # Caso de administrador: Obtener todos los médicos
+        query = '''SELECT id_medicos, CONCAT(nombres, ' ', apellidos_p, ' ', apellidos_m) as nombre FROM medicos;'''
+        cursor.execute(query)
+    else:
+        # Caso de médico normal: Obtener solo el médico específico
+        query = '''SELECT id_medicos, CONCAT(nombres, ' ', apellidos_p, ' ', apellidos_m) as nombre FROM medicos WHERE id_medicos = %s;'''
+        cursor.execute(query, (session['id_medicos'],))
+
+    medicos = cursor.fetchall()
     cursor.close()
-    return render_template('gMedicos.html', roles=roles)
+
+    if request.method == 'POST':
+        idmed = request.form.get('medico')
+        nombre = request.form.get('nombre')
+        apellidop = request.form.get('apellido_paterno')
+        apellidosm = request.form.get('apellido_materno')
+        fecha = request.form.get('fecha_nacimiento')
+        efc = request.form.get('enfermedad_cronica')
+        aler = request.form.get('alergia')
+        antecedentes_familiares = request.form.get('antecedentes_familiares')
+        # Convertir la fecha a formato DATE
+        # Asegúrate de que 'fecha' esté en formato 'YYYY-MM-DD'
+        # Puedes utilizar la librería datetime si es necesario
+        try:
+            fecha = datetime.strptime(fecha, '%Y-%m-%d').date()
+        except ValueError:
+            # Manejo de errores si la fecha no tiene el formato correcto
+            return "Formato de fecha no válido"
+        # Ejecutar el procedimiento almacenado
+        cursor = mysql.connection.cursor()
+        # Llamada al procedimiento almacenado
+        cursor.callproc('sp_ingresarExpediente', [
+            nombre,
+            apellidop,
+            apellidosm,
+            aler,
+            efc,
+            antecedentes_familiares,
+            fecha,
+            idmed,
+            None  # Puedes pasar un valor o 'None' si id_receta no es obligatorio
+        ])
+        # Confirmar los cambios
+        mysql.connection.commit()
+        # Cerrar el cursor
+        cursor.close()
+        return redirect('Home')
+
+        pass
+
+    return render_template('gPaciente.html', medicos=medicos)
+
+
+# --------------------------------------------------------------------------------------------------------
+
+
 #--------------------------------------------------------------------------------------------------------
 #cerrar sesion
 @app.route('/cerrar_sesion', methods=['POST'])

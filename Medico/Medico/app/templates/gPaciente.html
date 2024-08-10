@@ -98,50 +98,43 @@
         }
 
     </style>
-</head>
+
 <body>
-    <nav class="navbar">
-        <ul class="nav-links">
-            <li><a href="#" class="active">Inicio</a></li>
-            <li><a href="#">Pacientes</a></li>
-            <li><a href="#">Expedientes</a></li>
-            <li><a href="#">Administración</a></li>
-            <li><a href="#">Diagnósticos</a></li>
-            <li><a href="#">Historial de citas</a></li>
-        </ul>
-        <div class="user-profile">
-            <img src="user-profile.jpg" alt="User Profile">
-        </div>
-    </nav>
+
     <div class="container">
         <div class="form-header">
             <img src="../static/logo.png" alt="Icono de registro">
             <h2>REGISTRO DE NUEVOS EXPEDIENTES</h2>
         </div>
-        <form>
+        <form method="POST" action="{{ url_for('AgregarPaciente') }}">
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-section">
                         <h5>Información Personal</h5>
                         <div class="form-group">
                             <label for="medico">Médico que atiende <span class="text-danger">*</span></label>
-                            <input type="text" id="medico" class="form-control" required>
+                            <select id="medico" name="medico" class="form-control" required>
+                                {% for medico in medicos %}
+                                    <option value="{{ medico[0] }}">{{ medico[1] }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
+
                         <div class="form-group">
                             <label for="nombre">Nombre <span class="text-danger">*</span></label>
-                            <input type="text" id="nombre" class="form-control" required>
+                            <input type="text" name="nombre" id="nombre" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="apellido_paterno">Apellido paterno <span class="text-danger">*</span></label>
-                            <input type="text" id="apellido_paterno" class="form-control" required>
+                            <input type="text" id="apellido_paterno" name="apellido_paterno" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="apellido_materno">Apellido materno <span class="text-danger">*</span></label>
-                            <input type="text" id="apellido_materno" class="form-control" required>
+                            <input type="text" id="apellido_materno" name="apellido_materno" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="fecha_nacimiento">Fecha de nacimiento <span class="text-danger">*</span></label>
-                            <input type="date" id="fecha_nacimiento" class="form-control" required>
+                            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control" required>
                         </div>
                     </div>
                 </div>
@@ -150,15 +143,15 @@
                         <h5>Información Adicional</h5>
                         <div class="form-group">
                             <label for="enfermedad_cronica">Enfermedad crónica</label>
-                            <textarea id="enfermedad_cronica" class="form-control" rows="3"></textarea>
+                            <textarea id="enfermedad_cronica" name="enfermedad_cronica" class="form-control" rows="3"></textarea>
                         </div>
                         <div class="form-group">
                             <label for="alergia">Alergia</label>
-                            <textarea id="alergia" class="form-control" rows="3"></textarea>
+                            <textarea id="alergia" name="alergia" class="form-control" rows="3"></textarea>
                         </div>
                         <div class="form-group">
                             <label for="antecedentes_familiares">Antecedentes familiares</label>
-                            <textarea id="antecedentes_familiares" class="form-control" rows="3"></textarea>
+                            <textarea id="antecedentes_familiares" name="antecedentes_familiares" class="form-control" rows="3"></textarea>
                         </div>
                     </div>
                 </div>

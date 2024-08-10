@@ -119,7 +119,9 @@
     <header>
         <nav>
             <ul>
-                <li><a href="{{ url_for('Home') }}">Expedientes</a></li>
+                <li><a href="{{ url_for('Home') }}">Médicos</a></li>
+                <li><a href="{{ url_for('Expedientes') }}">Expedientes</a></li>
+
                 <li>
                     <form action="{{ url_for('cerrar_sesion') }}" method="post" style="display:inline;">
                         <button type="submit">Cerrar Sesión</button>
