@@ -33,7 +33,9 @@ def index():
 
 
 #--------------------------------------------------------------------------------------------------------
-#iniciar sesion
+#iniciar
+#Faltan alertas por si el usuario no puede redireccionar
+#Tambien falta agregar una forma de que el medio muestre si es un administrador o no
 @app.route('/iniciar_Sesion', methods=['POST'])
 def iniciar_Sesion():
     if request.method == 'POST':
@@ -42,17 +44,17 @@ def iniciar_Sesion():
         password = request.form.get('password')
 
         query = '''
-        SELECT id_medicos FROM medicos 
+        SELECT id_medicos, admin_permision FROM medicos 
         WHERE RFC = %s AND contraseña = %s;
         '''
 
         cursor.execute(query, (rfc, password))
         result = cursor.fetchone()
-        cursor.close()
 
         if result:
-            id_medicos = result[0]
+            id_medicos, admin_permision = result
             session['id_medicos'] = id_medicos
+            session['admin_permision'] = admin_permision
             return redirect(url_for('Home'))
         else:
             # Manejo de error si no se encuentra el médico
@@ -60,17 +62,34 @@ def iniciar_Sesion():
 #--------------------------------------------------------------------------------------------------------
 
 
-
 #--------------------------------------------------------------------------------------------------------
-#Ruta para redirigir al inicio
+#Ruta para redirigir al inicio con los pacientes de cada medico al inicio
 @app.route('/Home', methods=['GET'])
 def Home():
-    if session:
-        return render_template('Home.html', id_medicos=session['id_medicos'])
-    else:
-        return redirect(url_for('iniciar_Sesion'))
+    if 'id_medicos' in session:
+        #para los admin
+        if session.get('admin_permision'):
+            id_medicos = session['id_medicos']
+            cursor = mysql.connection.cursor()
+            cursor.execute('SELECT * FROM vw_medicos')
+            medicos = cursor.fetchall()
+            return render_template('Home.html', id_medicos=id_medicos, medicos = medicos)
+            pass
+        #para el usuario comun
+        else:
+            id_medicos = session['id_medicos']
+            cursor = mysql.connection.cursor()
+            query = 'SELECT * FROM vw_pacientes WHERE id_medico = %s;'
+            cursor.execute(query, (id_medicos,))
+            pacientes = cursor.fetchall()
+            cursor.close()
+
+            return render_template('Home.html', id_medicos=id_medicos, pacientes=pacientes)
+
+    return redirect(url_for('index'))
 
 #--------------------------------------------------------------------------------------------------------
+
 
 
 

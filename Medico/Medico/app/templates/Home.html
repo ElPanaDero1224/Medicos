@@ -1,16 +1,180 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #fff;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        nav ul li {
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+
+        nav ul li form {
+            margin: 0;
+        }
+
+        nav ul li button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            color: black;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .appointments-table, .medicos-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .appointments-table thead, .medicos-table thead {
+            background-color: #f0f0f0;
+        }
+
+        .appointments-table th, .appointments-table td,
+        .medicos-table th, .medicos-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .appointments-table tbody tr:hover,
+        .medicos-table tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .action-button {
+            padding: 8px 12px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .action-button:hover {
+            background-color: #444;
+        }
+
+        /* Estilo para resaltar administradores */
+        .admin-row {
+            background-color: #d0e7ff; /* Azul claro */
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h1>Bienvenido, Médico</h1>
-    <p>ID del Médico: {{ id_medicos }}</p>
 
-    <!-- Botón para cerrar sesión -->
-    <form action="{{ url_for('cerrar_sesion') }}" method="POST">
-        <button type="submit">Cerrar Sesión</button>
-    </form>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                <li><a href="#">Expedientes</a></li>
+                <li><a href="#">Historial de citas</a></li>
+                <li>
+                    <form action="{{ url_for('cerrar_sesion') }}" method="post" style="display:inline;">
+                        <button type="submit">Cerrar Sesión</button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        {% if session.get('admin_permision') %}
+        <!-- Vista para administradores -->
+        <h2>Lista de Médicos</h2>
+        <table class="medicos-table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apellido Paterno</th>
+                    <th>Apellido Materno</th>
+                    <th>RFC</th>
+                    <th>Rol</th>
+                    <th>Permiso de Admin</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for medico in medicos %}
+            <tr class="{% if medico[6] %}admin-row{% endif %}">
+                <td>{{ medico[0] }}</td>
+                <td>{{ medico[1] }}</td>
+                <td>{{ medico[2] }}</td>
+                <td>{{ medico[3] }}</td>
+                <td>{{ medico[4] }}</td>
+                <td>{{ medico[5] }}</td>
+                <td>{{ medico[6] }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% else %}
+        <!-- Vista para usuarios comunes -->
+        <h2>Lista de Pacientes</h2>
+        <table class="appointments-table">
+            <thead>
+                <tr>
+                    <th>Fecha de nacimiento</th>
+                    <th>Nombre del Paciente</th>
+                    <th>Diagnóstico</th>
+                    <th>Tratamiento</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for paciente in pacientes %}
+            <tr>
+                <td>{{ paciente[4] }}</td>
+                <td>{{ paciente[1] }} {{ paciente[2] }} {{ paciente[3] }}</td>
+                <td>{{ paciente.diagnostico }}</td>
+                <td>{{ paciente.tratamiento }}</td>
+                <td>
+                    <a class="action-button">Modificar</a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
 </body>
 </html>
