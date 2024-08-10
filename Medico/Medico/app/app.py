@@ -92,7 +92,37 @@ def Home():
 
 
 
+#--------------------------------------------------------------------------------------------------------
+#Funcion dos en uno
+@app.route('/AgregarMedicos', methods=['GET', 'POST'])
+def AgregarMedicos():
+    if request.method == 'POST':
+        # Recoger los datos del formulario
+        rfc = request.form.get('rfc')
+        nombre = request.form.get('name')
+        email = request.form.get('email')
+        cedula = request.form.get('cedula')
+        rol_id = request.form.get('rol')
 
+        # Conectar a la base de datos e insertar los datos
+        cursor = mysql.connection.cursor()
+        query = '''
+            INSERT INTO medicos (RFC, nombres, correo, cedula, id_rol)
+            VALUES (%s, %s, %s, %s, %s);
+        '''
+        cursor.execute(query, (rfc, nombre, email, cedula, rol_id))
+        mysql.connection.commit()
+        cursor.close()
+
+        # Redirigir a la página de médicos después de agregar
+        return redirect(url_for('gMedicos'))
+
+    # En caso de que la solicitud sea GET, mostrar el formulario
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM roles;')
+    roles = cursor.fetchall()
+    cursor.close()
+    return render_template('gMedicos.html', roles=roles)
 #--------------------------------------------------------------------------------------------------------
 #cerrar sesion
 @app.route('/cerrar_sesion', methods=['POST'])

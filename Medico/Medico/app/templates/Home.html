@@ -54,13 +54,29 @@
             margin: 0 auto;
             background-color: #fff;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 12px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .add-button {
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #A5D6A7; /* Pastel green */
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .add-button:hover {
+            background-color: #81C784; /* Slightly darker pastel green */
         }
 
         .appointments-table, .medicos-table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
 
         .appointments-table thead, .medicos-table thead {
@@ -72,6 +88,7 @@
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
+            border-radius: 8px;
         }
 
         .appointments-table tbody tr:hover,
@@ -79,24 +96,31 @@
             background-color: #f9f9f9;
         }
 
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
         .action-button {
             padding: 8px 12px;
-            background-color: #000;
+            background-color: #90CAF9; /* Pastel blue */
             color: #fff;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
             text-decoration: none;
         }
 
         .action-button:hover {
-            background-color: #444;
+            background-color: #64B5F6; /* Slightly darker pastel blue */
         }
 
-        /* Estilo para resaltar administradores */
-        .admin-row {
-            background-color: #d0e7ff; /* Azul claro */
-            font-weight: bold;
+        .delete-button {
+            background-color: #EF9A9A; /* Pastel red */
+        }
+
+        .delete-button:hover {
+            background-color: #E57373; /* Slightly darker pastel red */
         }
     </style>
 </head>
@@ -105,11 +129,11 @@
     <header>
         <nav>
             <ul>
-                <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                <li><a href="#">Inicio</a></li>
                 <li><a href="#">Expedientes</a></li>
                 <li><a href="#">Historial de citas</a></li>
                 <li>
-                    <form action="{{ url_for('cerrar_sesion') }}" method="post" style="display:inline;">
+                    <form method="post" style="display:inline;">
                         <button type="submit">Cerrar Sesión</button>
                     </form>
                 </li>
@@ -121,6 +145,9 @@
         {% if session.get('admin_permision') %}
         <!-- Vista para administradores -->
         <h2>Lista de Médicos</h2>
+        <form action="{{ url_for('AgregarMedicos') }}" style="display:inline;">
+            <button type="submit" class="add-button">Agregar Médico</button>
+        </form>
         <table class="medicos-table">
             <thead>
                 <tr>
@@ -130,18 +157,24 @@
                     <th>RFC</th>
                     <th>Rol</th>
                     <th>Permiso de Admin</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
             {% for medico in medicos %}
-            <tr class="{% if medico[6] %}admin-row{% endif %}">
-                <td>{{ medico[0] }}</td>
+            <tr>
                 <td>{{ medico[1] }}</td>
                 <td>{{ medico[2] }}</td>
                 <td>{{ medico[3] }}</td>
                 <td>{{ medico[4] }}</td>
                 <td>{{ medico[5] }}</td>
                 <td>{{ medico[6] }}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="action-button">Modificar</button>
+                        <button class="action-button delete-button">Borrar</button>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
             </tbody>
@@ -150,6 +183,7 @@
         {% else %}
         <!-- Vista para usuarios comunes -->
         <h2>Lista de Pacientes</h2>
+        <button class="add-button">Agregar Paciente</button>
         <table class="appointments-table">
             <thead>
                 <tr>
@@ -168,7 +202,9 @@
                 <td>{{ paciente.diagnostico }}</td>
                 <td>{{ paciente.tratamiento }}</td>
                 <td>
-                    <a class="action-button">Modificar</a>
+                    <div class="action-buttons">
+                        <button class="action-button">Modificar</button>
+                    </div>
                 </td>
             </tr>
             {% endfor %}
