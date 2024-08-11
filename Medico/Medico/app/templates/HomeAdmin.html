@@ -168,7 +168,7 @@
                 <td>{{ medico[5] }}</td>
                 <td>
                     <div class="action-buttons">
-                        <button class="action-button">Modificar</button>
+                        <a href="{{ url_for('ActualizarMedico', idMedico=medico[0]) }}" class="action-button">Modificar</a>
                         <button class="action-button delete-button">Borrar</button>
                     </div>
                 </td>

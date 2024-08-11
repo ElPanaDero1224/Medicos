@@ -37,6 +37,7 @@ def index():
 #iniciar
 #Faltan alertas por si el usuario no puede redireccionar
 #Tambien falta agregar una forma de que el medio muestre si es un administrador o no
+#Falta encriptar las contrasenias
 @app.route('/iniciar_Sesion', methods=['POST'])
 def iniciar_Sesion():
     if request.method == 'POST':
@@ -103,6 +104,7 @@ def Home():
 #--------------------------------------------------------------------------------------------------------
 #Funcion dos en uno Agregar un medico y abrir la plantilla para ingresar un medico
 #Falta agregar lo de verificar contrasenia, no repetir RFC
+#Falta un campo para agregar la cedula
 @app.route('/AgregarMedicos', methods=['GET', 'POST'])
 def AgregarMedicos():
     if session.get('admin_permision') == 1 and 'id_medicos' in session:
@@ -299,6 +301,75 @@ def ActualizarExpediente(idExp):
     return render_template('UpExpediente.html', medicos=medicos, paciente=paciente)
 
 #--------------------------------------------------------------------------------------------------------
+
+
+
+
+
+# --------------------------------------------------------------------------------------------------------
+#Actualizar medicos
+@app.route('/ActualizarMedico/<int:idMedico>', methods=['GET', 'POST'])
+def ActualizarMedico(idMedico):
+    if 'id_medicos' not in session:
+        return redirect(url_for('index'))
+
+    if session.get('admin_permision') != 1:
+        return redirect(url_for('Home'))
+
+    cursor = mysql.connection.cursor()
+
+    query = '''
+    SELECT id_medicos, nombres, apellidos_p, apellidos_m, correo, 
+    RFC, cedula, id_rol, admin_permision 
+    FROM medicos WHERE id_medicos = %s;
+    '''
+    cursor.execute(query, (idMedico,))
+    medico = cursor.fetchone()
+    cursor.close()
+
+    cursor = mysql.connection.cursor()
+    query = 'SELECT * FROM roles;'  # Cambié esto para seleccionar solo los campos necesarios
+    cursor.execute(query)
+    roles = cursor.fetchall()
+    cursor.close()
+
+    if request.method == 'POST':
+        nombre = request.form['name']
+        apellidop = request.form['apellido_paterno']
+        apellidom = request.form['apellido_materno']
+        correo = request.form['email']
+        rfc = request.form['rfc']
+        cedula = request.form['cedula']
+        rol = request.form['rol']
+        tipo_usuario = request.form['tipo_usuario']
+        contrasenia = request.form['contrasenia']
+        verificar_contrasenia = request.form['verificar_contrasenia']
+
+        if contrasenia != verificar_contrasenia:
+            flash('Las contraseñas no coinciden')
+            return redirect(url_for('ActualizarMedico', idMedico=idMedico))
+
+        # Encriptar la contraseña antes de guardarla (debes implementar la encriptación)
+
+        cursor = mysql.connection.cursor()
+        cursor.execute('''
+            UPDATE medicos
+            SET nombres=%s, apellidos_p=%s, apellidos_m=%s, correo=%s, 
+                RFC=%s, cedula=%s, id_rol=%s, admin_permision=%s, contraseña=%s
+            WHERE id_medicos = %s
+        ''', (nombre, apellidop, apellidom, correo, rfc, cedula, rol, tipo_usuario, contrasenia, idMedico))
+        mysql.connection.commit()
+        cursor.close()
+
+        return redirect(url_for('Home'))
+
+    return render_template('UpMedico.html', medico=medico, roles=roles)
+
+
+#--------------------------------------------------------------------------------------------------------
+
+
+
 
 
 
