@@ -150,11 +150,13 @@
                 <td>{{ paciente[1] }} {{ paciente[2] }} {{ paciente[3] }}</td>
                 <td>{{ paciente.diagnostico }}</td>
                 <td>{{ paciente.tratamiento }}</td>
+
                 <td>
                     <div class="action-buttons">
-                        <button class="action-button">Modificar</button>
+                        <a href="{{ url_for('ActualizarExpediente', idExp=paciente[0]) }}" class="action-button">Modificar</a>
                     </div>
                 </td>
+
             </tr>
             {% endfor %}
             </tbody>

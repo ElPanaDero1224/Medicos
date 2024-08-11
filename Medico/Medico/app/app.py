@@ -233,6 +233,82 @@ def AgregarPaciente():
 
 
 # --------------------------------------------------------------------------------------------------------
+#Actualizar Expedientes
+@app.route('/ActualizarExpediente/<int:idExp>', methods=['GET', 'POST'])
+def ActualizarExpediente(idExp):
+    if 'id_medicos' not in session:
+        return redirect(url_for('index'))
+
+    cursor = mysql.connection.cursor()
+
+#medicos obtenidos ADMIN
+    if session.get('admin_permision') == 1:
+
+        # Obtener los médicos (opcional)
+        cursor.execute('SELECT id_medicos, CONCAT(nombres, " ", apellidos_p, " ", apellidos_m) AS nombre FROM medicos;')
+        medicos = cursor.fetchall()
+
+#Medicos obtenidos Normal USER
+    else:
+        query ='''
+        SELECT id_medicos, CONCAT(nombres, " ", apellidos_p, " ", apellidos_m) 
+        AS nombre FROM medicos
+        WHERE id_medicos = %s;
+        '''
+        cursor.execute(query, (session['id_medicos'],))
+        medicos = cursor.fetchall()
+
+    # Obtener los datos del paciente por id_expediente
+    cursor.execute('''
+        SELECT id_expediente, nombres, apellidos_p, apellidos_m, alergias, enfermedades_cronicas, antecedentes_familiares, fecha_nacimiento, id_medico
+        FROM expedientes WHERE id_expediente = %s
+    ''', (idExp,))
+    paciente = cursor.fetchone()
+
+    if request.method == 'POST':
+        # Obtener datos del formulario
+        idmed = request.form['medico']
+        nombre = request.form['nombre']
+        apellidop = request.form['apellido_paterno']
+        apellidom = request.form['apellido_materno']
+        fecha = request.form['fecha_nacimiento']
+        efc = request.form['enfermedad_cronica']
+        aler = request.form['alergia']
+        antecedentes_familiares = request.form['antecedentes_familiares']
+
+        # Validar y actualizar datos
+        try:
+            fecha = datetime.strptime(fecha, '%Y-%m-%d').date()
+        except ValueError:
+            return "Formato de fecha no válido"
+
+        cursor.execute('''
+            UPDATE expedientes
+            SET nombres=%s, apellidos_p=%s, apellidos_m=%s, alergias=%s, enfermedades_cronicas=%s, antecedentes_familiares=%s, fecha_nacimiento=%s, id_medico=%s
+            WHERE id_expediente = %s
+        ''', (nombre, apellidop, apellidom, aler, efc, antecedentes_familiares, fecha, idmed, idExp))
+        mysql.connection.commit()
+        cursor.close()
+
+        if session.get('admin_permision') == 1:
+            return redirect(url_for('Expedientes'))
+
+        else:
+            return redirect(url_for('Home'))
+
+    return render_template('UpExpediente.html', medicos=medicos, paciente=paciente)
+
+#--------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
 
 
 #--------------------------------------------------------------------------------------------------------
