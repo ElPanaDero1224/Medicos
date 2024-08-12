@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Nuevas Recetas</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f7f8fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header img {
+            width: 100px;
+            margin-right: 20px;
+        }
+
+        .form-header h2 {
+            margin: 0;
+        }
+
+        .form-section {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        .form-section h5 {
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            border-radius: 5px;
+        }
+
+        .form-group textarea {
+            resize: none;
+        }
+
+        .btn-register {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-register:hover {
+            background-color: #333;
+        }
+
+        .readonly-field {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li {
+            margin-right: 20px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: black;
+            font-weight: normal;
+            transition: font-weight 0.3s ease;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            font-weight: bold;
+        }
+
+        .user-profile img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <ul class="nav-links">
+            <li><a href="#" class="active">Inicio</a></li>
+            <li><a href="#">Pacientes</a></li>
+            <li><a href="#">Expedientes</a></li>
+            <li><a href="#">Administración</a></li>
+            <li><a href="#">Diagnósticos</a></li>
+            <li><a href="#">Historial de citas</a></li>
+        </ul>
+        <div class="user-profile">
+            <img src="user-profile.jpg" alt="Perfil del usuario">
+        </div>
+    </nav>
+    <div class="container">
+        <div class="form-header">
+            <img src="logo.png" alt="Icono de registro">
+            <h2>REGISTRO DE NUEVAS RECETAS</h2>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-section">
+                    <h5>Datos del Paciente</h5>
+                    <div class="form-group">
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" id="nombre" class="form-control readonly-field" value="{{ recetas[0][0] }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido">Apellidos:</label>
+                        <input type="text" id="apellido" class="form-control readonly-field" value="{{ recetas[0][1] }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="alergia">Alergias:</label>
+                        <textarea id="alergia" class="form-control readonly-field" rows="3" readonly>{{ recetas[0][2] }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="cronica">Enfermedades crónicas:</label>
+                        <textarea id="cronica" class="form-control readonly-field" rows="3" readonly>{{ recetas[0][3] }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="familiares">Antecedentes Familiares:</label>
+                        <input type="text" id="familiares" class="form-control readonly-field" value="{{ recetas[0][4] }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_nacimiento">Fecha de nacimiento:</label>
+                        <input type="text" id="fecha_nacimiento" class="form-control readonly-field" value="{{ recetas[0][5] }}" readonly>
+                    </div>
+                    <h5>Datos del Médico</h5>
+                    <div class="form-group">
+                        <label for="nombre_medico">Nombre:</label>
+                        <input type="text" id="nombre_medico" class="form-control readonly-field" value="{{ medicos[1] }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido_medico">Apellidos:</label>
+                        <input type="text" id="apellido_medico" class="form-control readonly-field" value="{{ medicos[2] }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="rol_medico">Rol:</label>
+                        <input type="text" id="rol_medico" class="form-control readonly-field" value="{{ medicos[3] }}" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-section">
+                    <h5>Receta
+                    <button class="btn btn-primary btn-sm float-right" >Editar</button>
+                    </h5>
+                    <div class="form-group">
+                        <label for="informacion">Información:</label>
+                        <textarea id="informacion" class="form-control readonly-field" rows="3" readonly>{{ recetas[0][6] }}</textarea>
+                    </div>
+                    <h5>Exploración
+                    <button class="btn btn-primary btn-sm float-right">Editar</button>
+                    </h5>
+                    <div class="form-group">
+                        <label for="peso">Peso:</label>
+                        <input type="text" id="peso" class="form-control readonly-field" value="{{ recetas[0][12] }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="altura">Altura:</label>
+                        <input type="text" id="altura" class="form-control readonly-field" value="{{ recetas[0][13] }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="temperatura">Temperatura:</label>
+                        <input type="text" id="temperatura" class="form-control readonly-field" value="{{ recetas[0][14] }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="latidos_minuto">Latidos por minuto:</label>
+                        <input type="text" id="latidos_minuto" class="form-control readonly-field" value="{{ recetas[0][15] }}" readonly>
+                    </div>
+                    <h5>Diagnóstico
+                    <button class="btn btn-primary btn-sm float-right" onclick="editarDiagnostico()">Editar</button>
+                    </h5>
+                    <div class="form-group">
+                        <label for="tratamiento">Tratamiento:</label>
+                        <textarea id="tratamiento" class="form-control readonly-field" rows="3" readonly>{{ recetas[0][7] }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="diagnostico">Diagnóstico:</label>
+                        <textarea id="diagnostico" class="form-control readonly-field" rows="3" readonly>{{ recetas[0][9] }}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

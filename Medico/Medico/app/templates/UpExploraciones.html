@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Nuevos Expedientes</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f7f8fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .form-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .form-header img {
+            width: 100px;
+            margin-right: 20px;
+        }
+        .form-header h2 {
+            margin: 0;
+        }
+        .form-section {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #fff;
+        }
+        .form-section h5 {
+            margin-bottom: 20px;
+        }
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            border-radius: 5px;
+        }
+        .form-group textarea {
+            resize: none;
+        }
+        .btn-register {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li {
+            margin-right: 20px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: black;
+            font-weight: normal;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            font-weight: bold;
+        }
+
+        .user-profile img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <ul class="nav-links">
+            <li><a href="#" class="active">Inicio</a></li>
+            <li><a href="#">Pacientes</a></li>
+            <li><a href="#">Expedientes</a></li>
+            <li><a href="#">Administración</a></li>
+            <li><a href="#">Diagnósticos</a></li>
+            <li><a href="#">Historial de citas</a></li>
+        </ul>
+        <div class="user-profile">
+            <img src="user-profile.jpg" alt="User Profile">
+        </div>
+    </nav>
+    <div class="container">
+        <div class="form-header">
+            <img src="logo.png" alt="Icono de registro">
+            <h2>REGISTRO DE NUEVOS EXPEDIENTES</h2>
+        </div>
+        <form>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-section">
+                        <h5>Exploraciones</h5>
+                        <div class="form-group">
+                            <label for="peso">Peso:</label>
+                            <input type="number" id="peso" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="altura">Altura:</label>
+                            <input type="number" id="altura" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="temperatura">Temperatura:</label>
+                            <input type="number" id="temperatura" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="latidos_minuto">Latidos por minuto:</label>
+                            <input type="number" id="latidos_minuto" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <button type="submit" class="btn-register">Generar Receta</button>
+        </form>
+    </div>
+</body>
+</html>

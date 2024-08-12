@@ -141,8 +141,9 @@
                     <th>Fecha de nacimiento</th>
                     <th>Nombre del Paciente</th>
                     <th>Diagnóstico</th>
-                    <th>Tratamiento</th>
+                    <th>Mostrar</th>
                     <th>Acciones</th>
+                    <th>Recetas</th>
                 </tr>
             </thead>
             <tbody>
@@ -151,11 +152,27 @@
                 <td>{{ paciente[4] }}</td>
                 <td>{{ paciente[1] }} {{ paciente[2] }} {{ paciente[3] }}</td>
                 <td>{{ paciente.diagnostico }}</td>
-                <td>{{ paciente.tratamiento }}</td>
+
+                <td>
+                <div class="action-buttons">
+                    {% if paciente and paciente[6] %}
+                        <a href="{{ url_for('mostrarReceta', idRece=paciente[6]) }}" class="action-button">Ver Receta</a>
+                    {% else %}
+                        <a href="#" class="action-button disabled">Sin receta</a>  <!-- O alguna otra acción -->
+                    {% endif %}
+                </div>
+                </td>
+
+
+
                 <td>
                     <div class="action-buttons">
                         <a href="{{ url_for('ActualizarExpediente', idExp=paciente[0]) }}" class="action-button">Modificar</a>
                     </div>
+                </td>
+
+                <td>
+                    <a href="{{ url_for('generarRecetas', idExp=paciente[0]) }}" class="action-button">Generar</a>
                 </td>
             </tr>
             {% endfor %}

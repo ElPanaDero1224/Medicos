@@ -117,11 +117,12 @@ def AgregarMedicos():
             RFC = request.form.get('rfc')
             idrol = request.form.get('rol')
             adminp = request.form.get('tipo_usuario')
+            cedula = request.form.get('cedula')
 
             # Conectar a la base de datos e insertar los datos
             cursor = mysql.connection.cursor()
             # Llamar al procedimiento almacenado
-            cursor.callproc('sp_RegistrarMedico', (nombre, apellidosp, apellidosm, correo, contrasenia, RFC, idrol, adminp))
+            cursor.callproc('sp_RegistrarMedico', (nombre, apellidosp, apellidosm, correo, contrasenia, RFC, idrol, adminp, cedula))
             # Confirmar la transacción
             mysql.connection.commit()
             # Cerrar el cursor
@@ -163,9 +164,6 @@ def Expedientes():
 
 
 #--------------------------------------------------------------------------------------------------------
-
-
-
 
 
 
@@ -368,6 +366,143 @@ def ActualizarMedico(idMedico):
 
 #--------------------------------------------------------------------------------------------------------
 
+
+
+#--------------------------------------------------------------------------------------------------------
+#Agregar cita completa
+#Procedimiento almacenado para generar cita, expediente, receta
+
+@app.route('/generarRecetas/<int:idExp>', methods=['GET', 'POST'])
+def generarRecetas(idExp):
+    if 'id_medicos' in session:
+        id_medicos = session['id_medicos']
+        if request.method == 'POST':
+            try:
+                cursor = mysql.connection.cursor()
+
+                # Obtener los valores del formulario
+                informacion = request.form.get('informacion')
+                peso = request.form.get('peso')
+                altura = request.form.get('altura')
+                temperatura = request.form.get('temperatura')
+                latidos_minuto = request.form.get('latidos_minuto')
+                tratamiento = request.form.get('tratamiento')
+                diagnostico = request.form.get('diagnostico')
+
+                # Manejar conversiones con valores por defecto
+                try:
+                    peso = float(peso) if peso else None
+                    altura = float(altura) if altura else None
+                    temperatura = float(temperatura) if temperatura else None
+                    latidos_minuto = int(latidos_minuto) if latidos_minuto else None
+                except ValueError as e:
+                    flash(f'Error en los valores decimales: {str(e)}', 'danger')
+                    return redirect(url_for('generarRecetas', idExp=idExp))
+
+                # Llamar al procedimiento almacenado
+                cursor.callproc('sp_agregarReceta', (
+                    tratamiento,
+                    diagnostico,
+                    idExp,
+                    peso,
+                    altura,
+                    temperatura,
+                    latidos_minuto,
+                    id_medicos,
+                    informacion
+                ))
+
+                # Confirmar la transacción
+                mysql.connection.commit()
+                cursor.close()
+
+                # Redirección basada en permisos
+                if session.get('admin_permision') == 1:
+                    return redirect(url_for('Expedientes'))
+                else:
+                    return redirect(url_for('Home'))
+
+            except Exception as e:
+                mysql.connection.rollback()
+                cursor.close()
+                flash(f'Error al generar la receta: {str(e)}', 'danger')
+                return redirect(url_for('generarRecetas', idExp=idExp))
+
+
+        else:
+            # Obtener datos del paciente
+            cursor = mysql.connection.cursor()
+            query_paciente = '''
+            SELECT id_expediente, nombres, concat(apellidos_p, ' ', apellidos_m) as ap,
+            alergias, enfermedades_cronicas, antecedentes_familiares, fecha_nacimiento
+            FROM expedientes
+            WHERE id_expediente = %s
+            '''
+            cursor.execute(query_paciente, (idExp,))
+            paciente = cursor.fetchone()
+
+            # Obtener datos del médico
+            query_medico = '''
+            SELECT id_medicos, m.nombres, concat(m.apellidos_p, ' ', m.apellidos_m) as ap, r.nombre_rol
+            FROM medicos as m
+            JOIN roles as r on m.id_rol = r.id_rol
+            WHERE id_medicos = %s;
+            '''
+            cursor.execute(query_medico, (id_medicos,))
+            medicos = cursor.fetchone()
+            cursor.close()
+
+            # Renderizar la plantilla
+            return render_template('GenerarReceta.html', medicos=medicos, paciente=paciente)
+
+    else:
+        return redirect(url_for('index'))
+
+
+#--------------------------------------------------------------------------------------------------------
+
+
+@app.route('/mostrarReceta/<int:idRece>', methods=['GET', 'POST'])
+def mostrarReceta(idRece):
+    if 'id_medicos' in session:
+        id_medicos = session['id_medicos']
+
+        cursor = mysql.connection.cursor()
+
+        query = '''
+        SELECT ex.nombres, concat(ex.apellidos_p, ' ', ex.apellidos_m) as ap,
+        ex.alergias, ex.enfermedades_cronicas, ex.antecedentes_familiares, ex.fecha_nacimiento,
+        r.informacion, d.tratamiento, d.fecha, d.dx,
+        c.fecha, e.peso, e.altura, e.temperatura, e.latidos_por_min,
+        r.id_receta, r.id_diagnostico, r.id_cita, e.id_exploracion
+        FROM expedientes as ex 
+        JOIN recetas as r ON  ex.id_receta = r.id_receta
+        JOIN diagnosticos as d on d.id_diagnostico = r.id_diagnostico
+        JOIN citas AS c ON c.id_cita = r.id_cita
+        JOIN exploraciones as e on e.id_exploracion = c.id_exploracion
+        WHERE r.id_receta = %s
+        '''
+
+        cursor.execute(query, (idRece,))
+        recetas = cursor.fetchall()
+
+        query_medico = '''
+        SELECT id_medicos, m.nombres, concat(m.apellidos_p, ' ', m.apellidos_m) as ap, r.nombre_rol
+        FROM medicos as m
+        JOIN roles as r on m.id_rol = r.id_rol
+        WHERE id_medicos = %s;
+        '''
+        cursor.execute(query_medico, (id_medicos,))
+        medicos = cursor.fetchone()
+        cursor.close()
+
+        return render_template('mostrarReceta.html', medicos=medicos, recetas=recetas)
+
+    else:
+        return redirect(url_for('index'))
+
+
+#--------------------------------------------------------------------------------------------------------
 
 
 
