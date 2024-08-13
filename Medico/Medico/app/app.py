@@ -597,6 +597,69 @@ def updateExploraciones(idExplo):
 
 
 
+
+#--------------------------------------------------------------------------------------------------------
+#Actualizar receta
+
+@app.route('/actualizarReceta/<int:idReceta>', methods=['GET', 'POST'])
+def actualizarReceta(idReceta):
+    if 'id_medicos' in session:
+        cursor = mysql.connection.cursor()
+
+        # Consulta para obtener la receta y el diagnóstico actual
+        query = '''
+        SELECT id_receta, informacion FROM recetas
+        WHERE id_receta = %s
+        '''
+        cursor.execute(query, (idReceta,))
+        rediag = cursor.fetchone()
+        cursor.close()
+
+        return render_template('UpReceta.html', rediag=rediag)
+
+    else:
+        return redirect(url_for('index'))
+#--------------------------------------------------------------------------------------------------------
+
+
+
+#--------------------------------------------------------------------------------------------------------
+#Funcion para actualizar receta
+@app.route('/updateReceta/<int:idReceta>', methods=['GET', 'POST'])
+def updateReceta(idReceta):
+    if 'id_medicos' in session:
+        cursor = mysql.connection.cursor()
+        if request.method == 'POST':
+            informacion = request.form['informacion']
+
+            # Consulta para actualizar la información de la receta
+            query = '''
+                UPDATE recetas 
+                SET informacion = %s 
+                WHERE id_receta = %s;
+            '''
+            cursor.execute(query, (informacion, idReceta))
+            mysql.connection.commit()  # Confirma la transacción
+
+            return redirect(url_for('Home'))  # Asegúrate de que 'Home' sea una ruta válida
+
+    # Redirige a la página de inicio de sesión si no hay sesión activa
+    return redirect(url_for('index'))
+
+
+#--------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
 #--------------------------------------------------------------------------------------------------------
 #cerrar sesion
 @app.route('/cerrar_sesion', methods=['POST'])

@@ -182,9 +182,11 @@
 
             <div class="col-md-6">
                 <div class="form-section">
+
                     <h5>Receta
-                    <button class="btn btn-primary btn-sm float-right" >Editar</button>
+                        <a href="{{ url_for('actualizarReceta', idReceta=recetas[0][15]) }}" class="action-button">Actualizar</a>
                     </h5>
+
                     <div class="form-group">
                         <label for="informacion">Información:</label>
                         <textarea id="informacion" class="form-control readonly-field" rows="3" readonly>{{ recetas[0][6] }}</textarea>

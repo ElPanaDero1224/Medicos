@@ -114,24 +114,27 @@
         </div>
     </nav>
     <div class="container">
-        <div class="form-header">
-            <img src="logo.png" alt="Icono de registro">
-            <h2>REGISTRO DE NUEVOS EXPEDIENTES</h2>
-        </div>
-        <form>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-section">
-                        <h5>Recetas</h5>
-                        <div class="form-group">
-                            <label for="informacion">Información: <span class="text-danger">*</span></label>
-                            <textarea id="informacion" class="form-control" rows="3"></textarea>
-                        </div>
+    <div class="form-header">
+        <img src="logo.png" alt="Icono de registro">
+        <h2>REGISTRO DE NUEVOS EXPEDIENTES</h2>
+    </div>
+    <form action="{{ url_for('updateReceta', idReceta=rediag[0]) }}" method="POST">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-section">
+                    <h5>Recetas</h5>
+
+                    <div class="form-group">
+                        <label for="informacion">Información: <span class="text-danger">*</span></label>
+                        <textarea id="informacion" name="informacion" class="form-control" rows="3">{{ rediag[1] }}</textarea>
                     </div>
+
                 </div>
             </div>
-            <button type="submit" class="btn-register">Generar Receta</button>
-        </form>
-    </div>
+        </div>
+        <button type="submit" class="btn-register">Generar Receta</button>
+    </form>
+</div>
+
 </body>
 </html>
