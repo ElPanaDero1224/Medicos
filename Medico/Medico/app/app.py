@@ -639,7 +639,8 @@ def updateReceta(idReceta):
                 WHERE id_receta = %s;
             '''
             cursor.execute(query, (informacion, idReceta))
-            mysql.connection.commit()  # Confirma la transacción
+            mysql.connection.commit()
+            cursor.close()
 
             return redirect(url_for('Home'))  # Asegúrate de que 'Home' sea una ruta válida
 
