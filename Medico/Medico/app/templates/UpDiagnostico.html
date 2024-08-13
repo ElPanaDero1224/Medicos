@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Nuevos Expedientes</title>
+    <title>Actualizar Diagnóstico</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-
         .container {
             margin-top: 50px;
         }
@@ -30,10 +29,9 @@
             background-color: #fff;
         }
         .form-section h5 {
-    margin-bottom: 20px;
-    font-weight: bold; /* Añade esta línea para hacer el texto más oscuro */
-}
-
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
         .form-group select,
         .form-group input,
         .form-group textarea {
@@ -42,23 +40,43 @@
         .form-group textarea {
             resize: none;
         }
-        .btn-register {
+        .btn-register, .btn-cancel {
             display: block;
             width: 100%;
             padding: 10px;
-            background-color: #000;
-            color: #fff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             text-align: center;
+        }
+        .btn-register {
+            background-color: #000;
+            color: #fff;
+            margin-top: 10px;
+        }
+        .btn-cancel {
+            background-color: #ccc;
+            color: #000;
+            margin-top: 10px;
+        }
+        .btn-edit {
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        .btn-edit:hover {
+            background-color: #0056b3;
+            text-decoration: none;
+            color: #fff;
         }
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
         }
-
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -67,35 +85,29 @@
             padding: 10px 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-
         .nav-links {
             list-style: none;
             display: flex;
             margin: 0;
             padding: 0;
         }
-
         .nav-links li {
             margin-right: 20px;
         }
-
         .nav-links a {
             text-decoration: none;
             color: black;
             font-weight: normal;
         }
-
         .nav-links a.active,
         .nav-links a:hover {
             font-weight: bold;
         }
-
         .user-profile img {
             width: 30px;
             height: 30px;
             border-radius: 50%;
         }
-
     </style>
 </head>
 <body>
@@ -114,36 +126,35 @@
     </nav>
     <div class="container">
         <div class="form-header">
-            <img src="logo.png" alt="Icono de registro">
-            <h2>REGISTRO DE NUEVOS EXPEDIENTES</h2>
+            <img src="logo.png" alt="Icono de actualización">
+            <h2>ACTUALIZAR DIAGNÓSTICO</h2>
         </div>
-        <form>
+
+        <form action="{{ url_for('updateDiagnostico', idDiag=rediag[1]) }}" method="post">
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-section">
                         <h5>Diagnóstico</h5>
                         <div class="form-group">
                             <label for="tratamiento">Tratamiento: <span class="text-danger">*</span></label>
-                            <textarea id="tratamiento" class="form-control" rows="3"></textarea>
+                            <textarea id="tratamiento" name="tratamiento" class="form-control" rows="3" required>{{ rediag[2] }}</textarea>
                         </div>
 
                         <div class="form-group">
-                            <label for="fecha">Fecha: <span class="text-danger">*</span></label>
-                            <input type="number" id="fecha" class="form-control" required>
+                            <label for="fecha">Fecha:</label>
+                            <input type="text" id="fecha" name="fecha" class="form-control" value="{{ rediag[3] }}" readonly>
                         </div>
 
-
-                        <div class="form-group">
-                            <label for="diagnostico">Diagnostico: <span class="text-danger">*</span></label>
-                            <textarea id="diagnostico" name="diagnostico" class="form-control" rows="3"></textarea>
+                       <div class="form-group">
+                            <label for="diagnostico">Diagnóstico: <span class="text-danger">*</span></label>
+                            <input type="text" id="diagnostico" name="diagnostico" class="form-control" value="{{ rediag[4] }}" required>
                         </div>
 
-
+                        <button type="submit" class="btn-register">Actualizar</button>
+                        <a href="{{ url_for('index') }}" class="btn-cancel">Cancelar</a>
                     </div>
                 </div>
-
             </div>
-            <button type="submit" class="btn-register">Generar Receta</button>
         </form>
     </div>
 </body>

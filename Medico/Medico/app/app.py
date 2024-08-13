@@ -31,8 +31,6 @@ def index():
 #--------------------------------------------------------------------------------------------------------
 
 
-
-
 #--------------------------------------------------------------------------------------------------------
 #iniciar
 #Faltan alertas por si el usuario no puede redireccionar
@@ -62,9 +60,6 @@ def iniciar_Sesion():
             # Manejo de error si no se encuentra el médico
             return 'Credenciales incorrectas', 401
 #--------------------------------------------------------------------------------------------------------
-
-
-
 
 
 
@@ -390,14 +385,6 @@ def generarRecetas(idExp):
                 diagnostico = request.form.get('diagnostico')
 
                 # Manejar conversiones con valores por defecto
-                try:
-                    peso = float(peso) if peso else None
-                    altura = float(altura) if altura else None
-                    temperatura = float(temperatura) if temperatura else None
-                    latidos_minuto = int(latidos_minuto) if latidos_minuto else None
-                except ValueError as e:
-                    flash(f'Error en los valores decimales: {str(e)}', 'danger')
-                    return redirect(url_for('generarRecetas', idExp=idExp))
 
                 # Llamar al procedimiento almacenado
                 cursor.callproc('sp_agregarReceta', (
@@ -506,12 +493,105 @@ def mostrarReceta(idRece):
 
 
 
+#--------------------------------------------------------------------------------------------------------
+#Actualizar diagnostico
+
+@app.route('/actualizarDiagnostico/<int:idReceta>', methods=['GET', 'POST'])
+def actualizarDiagnosticos(idReceta):
+    if 'id_medicos' in session:
+        cursor = mysql.connection.cursor()
+
+        # Consulta para obtener la receta y el diagnóstico actual
+        query = '''
+        SELECT r.id_receta, r.id_diagnostico, d.tratamiento, d.fecha, d.dx
+        FROM recetas as r
+        JOIN diagnosticos as d ON d.id_diagnostico = r.id_diagnostico
+        WHERE r.id_receta = %s
+        '''
+        cursor.execute(query, (idReceta,))
+        rediag = cursor.fetchone()
+        cursor.close()
+
+        return render_template('UpDiagnostico.html', rediag=rediag)
+
+    else:
+        return redirect(url_for('index'))
 
 
+#--------------------------------------------------------------------------------------------------------
+#Funcion para actualizar diagnostico
+@app.route('/updateDiagnostico/<int:idDiag>', methods=['GET', 'POST'])
+def updateDiagnostico(idDiag):
+    if 'id_medicos' in session:
+        cursor = mysql.connection.cursor()
+        if request.method == 'POST':
+            tratamiento = request.form['tratamiento']
+            dx = request.form['diagnostico']
+
+            # Consulta para actualizar el diagnóstico
+            query = '''
+                    UPDATE diagnosticos 
+                    SET tratamiento = %s, dx = %s 
+                    WHERE id_diagnostico = %s
+                    '''
+            cursor.execute(query, (tratamiento, dx, idDiag))
+            mysql.connection.commit()  # Confirma la transacción
+
+            return redirect(url_for('Home'))  # Asegúrate de que 'Home' sea una ruta válida
+
+    return redirect(url_for('index'))
+#--------------------------------------------------------------------------------------------------------
 
 
+#--------------------------------------------------------------------------------------------------------
+@app.route('/actualizarExploraciones/<int:idReceta>', methods=['GET', 'POST'])
+def actualizarExploraciones(idReceta):
+    if 'id_medicos' in session:
+        cursor = mysql.connection.cursor()
+
+        # Consulta para obtener la receta y la exploracion actual
+        query = '''
+         SELECT r.id_receta, e.id_exploracion, e.peso, 
+        e.altura, e.temperatura, e.latidos_por_min 
+        FROM recetas as r
+        JOIN citas as c on c.id_exploracion = r.id_cita
+        JOIN exploraciones as e on e.id_exploracion = c.id_exploracion
+        WHERE r.id_receta = %s
+        '''
+        cursor.execute(query, (idReceta,))
+        rediag = cursor.fetchone()
+        cursor.close()
+
+        return render_template('UpExploraciones.html', rediag=rediag)
+
+    else:
+        return redirect(url_for('index'))
+#-------------------------------------------------------------------------------------------------
+#Funcion para actualizar exploraciones
+@app.route('/updateExploraciones/<int:idExplo>', methods=['GET', 'POST'])
+def updateExploraciones(idExplo):
+    if 'id_medicos' in session:
+        cursor = mysql.connection.cursor()
+        if request.method == 'POST':
+            peso = request.form['peso']
+            altura = request.form['altura']
+            temperatura = request.form['temperatura']
+            latidos_minuto = request.form['latidos_minuto']
 
 
+            # Consulta para actualizar el diagnóstico
+            query = '''
+                    UPDATE exploraciones SET peso = %s, 
+                    altura = %s, temperatura = %s, 
+                    latidos_por_min = %s WHERE id_exploracion = %s
+                    '''
+            cursor.execute(query, (peso, altura, temperatura, latidos_minuto, idExplo,))
+            mysql.connection.commit()  # Confirma la transacción
+
+            return redirect(url_for('Home'))  # Asegúrate de que 'Home' sea una ruta válida
+
+    return redirect(url_for('index'))
+#--------------------------------------------------------------------------------------------------------
 
 
 

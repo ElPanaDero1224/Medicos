@@ -190,7 +190,7 @@
                         <textarea id="informacion" class="form-control readonly-field" rows="3" readonly>{{ recetas[0][6] }}</textarea>
                     </div>
                     <h5>Exploración
-                    <button class="btn btn-primary btn-sm float-right">Editar</button>
+                    <a href="{{ url_for('actualizarExploraciones', idReceta=recetas[0][15]) }}" class="action-button">Actualizar</a>
                     </h5>
                     <div class="form-group">
                         <label for="peso">Peso:</label>
@@ -209,7 +209,7 @@
                         <input type="text" id="latidos_minuto" class="form-control readonly-field" value="{{ recetas[0][15] }}" readonly>
                     </div>
                     <h5>Diagnóstico
-                    <button class="btn btn-primary btn-sm float-right" onclick="editarDiagnostico()">Editar</button>
+                    <a href="{{ url_for('actualizarDiagnosticos', idReceta=recetas[0][15]) }}" class="action-button">Actualizar</a>
                     </h5>
                     <div class="form-group">
                         <label for="tratamiento">Tratamiento:</label>
