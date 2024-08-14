@@ -377,6 +377,7 @@ def ActualizarMedico(idMedico):
 #--------------------------------------------------------------------------------------------------------
 #Agregar cita completa
 #Procedimiento almacenado para generar cita, expediente, receta
+#Ya implementa logs
 
 @app.route('/generarRecetas/<int:idExp>', methods=['GET', 'POST'])
 def generarRecetas(idExp):
@@ -385,6 +386,7 @@ def generarRecetas(idExp):
         if request.method == 'POST':
             try:
                 cursor = mysql.connection.cursor()
+                cursor.execute('SET @id_medico = %s', (session['id_medicos'],))
 
                 # Obtener los valores del formulario
                 informacion = request.form.get('informacion')
@@ -535,6 +537,7 @@ def actualizarDiagnosticos(idReceta):
 def updateDiagnostico(idDiag):
     if 'id_medicos' in session:
         cursor = mysql.connection.cursor()
+        cursor.execute('SET @id_medico = %s', (session['id_medicos'],))
         if request.method == 'POST':
             tratamiento = request.form['tratamiento']
             dx = request.form['diagnostico']
@@ -577,12 +580,22 @@ def actualizarExploraciones(idReceta):
 
     else:
         return redirect(url_for('index'))
+
+
+
+
+
 #-------------------------------------------------------------------------------------------------
+
+
+
+
 #Funcion para actualizar exploraciones
 @app.route('/updateExploraciones/<int:idExplo>', methods=['GET', 'POST'])
 def updateExploraciones(idExplo):
     if 'id_medicos' in session:
         cursor = mysql.connection.cursor()
+        cursor.execute('SET @id_medico = %s', (session['id_medicos'],))
         if request.method == 'POST':
             peso = request.form['peso']
             altura = request.form['altura']
@@ -640,6 +653,7 @@ def actualizarReceta(idReceta):
 def updateReceta(idReceta):
     if 'id_medicos' in session:
         cursor = mysql.connection.cursor()
+        cursor.execute('SET @id_medico = %s', (session['id_medicos'],))
         if request.method == 'POST':
             informacion = request.form['informacion']
 
@@ -720,10 +734,30 @@ def borrarExpediente(idExp):
 #--------------------------------------------------------------------------------------------------------
 
 
+#--------------------------------------------------------------------------------------------------------
+@app.route('/mostrarLogs', methods=['GET', 'POST'])
+def mostrarLogs():
+    if 'id_medicos' in session and session.get('admin_permision') == 1:
 
+        cursor = mysql.connection.cursor()
+        # Consulta para obtener los logs
+        query = '''
+        SELECT concat(m.nombres, ' ', m.apellidos_p, ' ', m.apellidos_m) as nombre,
+        nombre_rol, admin_permision,
+        accion, fecha
+        FROM logs_acciones as l
+        JOIN medicos as m on m.id_medicos = l.id_medico
+        JOIN roles as r on m.id_rol = r.id_rol
+        ORDER BY fecha DESC;;
+        '''
+        cursor.execute(query)
+        rediag = cursor.fetchall()
+        cursor.close()
 
+        return render_template('mostrarLogs.html', rediag=rediag)
 
-
+    else:
+        return redirect(url_for('index'))
 
 
 
