@@ -101,7 +101,6 @@
 
         .action-button {
             padding: 8px 12px;
-            background-color: #90CAF9; /* Pastel blue */
             color: #fff;
             border: none;
             border-radius: 8px;
@@ -109,8 +108,37 @@
             text-decoration: none;
         }
 
-        .action-button:hover {
+        /* Button colors */
+        .action-button.delete {
+            background-color: #F48FB1; /* Pastel red */
+        }
+
+        .action-button.delete:hover {
+            background-color: #F06292; /* Slightly darker pastel red */
+        }
+
+        .action-button.show {
+            background-color: #FFD54F; /* Pastel yellow */
+        }
+
+        .action-button.show:hover {
+            background-color: #FFCA28; /* Slightly darker pastel yellow */
+        }
+
+        .action-button.update {
+            background-color: #90CAF9; /* Pastel blue */
+        }
+
+        .action-button.update:hover {
             background-color: #64B5F6; /* Slightly darker pastel blue */
+        }
+
+        .action-button.generate {
+            background-color: #A5D6A7; /* Pastel green */
+        }
+
+        .action-button.generate:hover {
+            background-color: #81C784; /* Slightly darker pastel green */
         }
     </style>
     <script>
@@ -138,7 +166,7 @@
     </header>
 
     <div class="container">
-        <h2>Lista de Pacientes</h2>
+        <h2>Lista de Pacientes del Médico</h2>
         <button class="add-button" onclick="window.location.href='/AgregarPaciente'">Agregar Paciente</button>
 
         <table class="appointments-table">
@@ -146,7 +174,53 @@
                 <tr>
                     <th>Fecha de nacimiento</th>
                     <th>Nombre del Paciente</th>
-                    <th>Expedientes</th>
+                    <th>Expediente</th>
+                    <th>Mostrar</th>
+                    <th>Acciones</th>
+                    <th>Recetas</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for paciente in pacientedMed %}
+            <tr>
+                <td>{{ paciente[4] }}</td>
+                <td>{{ paciente[1] }} {{ paciente[2] }} {{ paciente[3] }}</td>
+                <td><a href="{{ url_for('borrarExpediente', idExp=paciente[0]) }}" class="action-button delete" onclick="return confirmDelete();">Borrar</a></td>
+
+                <td>
+                <div class="action-buttons">
+                    {% if paciente and paciente[6] %}
+                        <a href="{{ url_for('mostrarReceta', idRece=paciente[6]) }}" class="action-button show">Ver Receta</a>
+                    {% else %}
+                        <a href="#" class="action-button show disabled">Sin receta</a>
+                    {% endif %}
+                </div>
+                </td>
+
+                <td>
+                    <div class="action-buttons">
+                        <a href="{{ url_for('ActualizarExpediente', idExp=paciente[0]) }}" class="action-button update">Modificar</a>
+                    </div>
+                </td>
+
+                <td>
+                    <a href="{{ url_for('generarRecetas', idExp=paciente[0]) }}" class="action-button generate">Generar</a>
+                </td>
+
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="container">
+        <h2>Lista de Todos los Pacientes</h2>
+        <table class="appointments-table">
+            <thead>
+                <tr>
+                    <th>Fecha de nacimiento</th>
+                    <th>Nombre del Paciente</th>
+                    <th>Expediente</th>
                     <th>Mostrar</th>
                     <th>Acciones</th>
                     <th>Recetas</th>
@@ -157,34 +231,33 @@
             <tr>
                 <td>{{ paciente[4] }}</td>
                 <td>{{ paciente[1] }} {{ paciente[2] }} {{ paciente[3] }}</td>
-
-                <td>
-                    <a href="{{ url_for('borrarExpediente', idExp=paciente[0]) }}" class="action-button" onclick="return confirmDelete();">Borrar</a>
-                </td>
+                <td><a href="{{ url_for('borrarExpediente', idExp=paciente[0]) }}" class="action-button delete" onclick="return confirmDelete();">Borrar</a></td>
 
                 <td>
                 <div class="action-buttons">
                     {% if paciente and paciente[6] %}
-                        <a href="{{ url_for('mostrarReceta', idRece=paciente[6]) }}" class="action-button">Ver Receta</a>
+                        <a href="{{ url_for('mostrarReceta', idRece=paciente[6]) }}" class="action-button show">Ver Receta</a>
                     {% else %}
-                        <a href="#" class="action-button disabled">Sin receta</a>
+                        <a href="#" class="action-button show disabled">Sin receta</a>
                     {% endif %}
                 </div>
                 </td>
 
                 <td>
                     <div class="action-buttons">
-                        <a href="{{ url_for('ActualizarExpediente', idExp=paciente[0]) }}" class="action-button">Modificar</a>
+                        <a href="{{ url_for('ActualizarExpediente', idExp=paciente[0]) }}" class="action-button update">Modificar</a>
                     </div>
                 </td>
 
                 <td>
-                    <a href="{{ url_for('generarRecetas', idExp=paciente[0]) }}" class="action-button">Generar</a>
+                    <a href="{{ url_for('generarRecetas', idExp=paciente[0]) }}" class="action-button generate">Generar</a>
                 </td>
+
             </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
+
 </body>
 </html>

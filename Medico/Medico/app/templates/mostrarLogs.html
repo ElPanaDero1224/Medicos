@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Control - Administrador</title>
     <style>
+        /* Existing CSS styles */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -79,7 +80,9 @@
 
                 <li>
                     <form action="{{ url_for('cerrar_sesion') }}" method="post" style="display:inline;">
-                        <button type="submit">Cerrar Sesión</button>
+                        <button type="submit" style="background:none; border:none; padding:0; color:black; font-family:sans-serif; font-size:16px; font-weight:bold; cursor:pointer;">
+                            Cerrar Sesión
+                        </button>
                     </form>
                 </li>
             </ul>
@@ -96,6 +99,7 @@
                     <th>Permisos de Administrador</th>
                     <th>Acción</th>
                     <th>Fecha</th>
+                    <th>Tabla</th> <!-- New column header -->
                 </tr>
             </thead>
             <tbody>
@@ -103,9 +107,10 @@
             <tr>
                 <td>{{ log[0] }}</td>
                 <td>{{ log[1] }}</td>
-                <td>{{ 'Administrador' if log[2] == 1 else 'Usuario común' }}</td>
+                <td>{{ 'Administrador' if log[2] == 1 else 'Usuario' }}</td>
                 <td>{{ log[3] }}</td>
                 <td>{{ log[4] }}</td>
+                <td>{{ log[5] }}</td> <!-- New data column -->
             </tr>
             {% endfor %}
             </tbody>

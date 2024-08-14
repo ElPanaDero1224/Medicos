@@ -59,7 +59,7 @@ def iniciar_Sesion():
             return redirect(url_for('Home'))
         else:
             # Manejo de error si no se encuentra el médico
-            return 'Credenciales incorrectas', 401
+            return redirect(url_for('index'))
 #--------------------------------------------------------------------------------------------------------
 
 
@@ -155,9 +155,14 @@ def Expedientes():
         query = 'SELECT * FROM vw_pacientes;'
         cursor.execute(query)
         pacientes = cursor.fetchall()
+
+        query2 = 'SELECT * FROM vw_pacientes WHERE id_medico = %s;'
+        cursor.execute(query2, (id_medicos,))
+        pacientedMed = cursor.fetchall()
+
         cursor.close()
 
-        return render_template('expedientesAd.html', id_medicos=id_medicos, pacientes=pacientes)
+        return render_template('expedientesAd.html', id_medicos=id_medicos, pacientes=pacientes, pacientedMed=pacientedMed)
     else:
         return redirect(url_for('Home'))
 
@@ -744,7 +749,7 @@ def mostrarLogs():
         query = '''
         SELECT concat(m.nombres, ' ', m.apellidos_p, ' ', m.apellidos_m) as nombre,
         nombre_rol, admin_permision,
-        accion, fecha
+        accion, fecha, tabla
         FROM logs_acciones as l
         JOIN medicos as m on m.id_medicos = l.id_medico
         JOIN roles as r on m.id_rol = r.id_rol
@@ -758,10 +763,6 @@ def mostrarLogs():
 
     else:
         return redirect(url_for('index'))
-
-
-
-
 
 
 
