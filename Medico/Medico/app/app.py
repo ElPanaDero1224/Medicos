@@ -36,6 +36,7 @@ def index():
 #Faltan alertas por si el usuario no puede redireccionar
 #Tambien falta agregar una forma de que el medio muestre si es un administrador o no
 #Falta encriptar las contrasenias
+#no es necesario modificarlo
 @app.route('/iniciar_Sesion', methods=['POST'])
 def iniciar_Sesion():
     if request.method == 'POST':
@@ -67,6 +68,7 @@ def iniciar_Sesion():
 
 #--------------------------------------------------------------------------------------------------------
 #Ruta para redirigir al inicio con los pacientes de cada medico al inicio
+#no es necesario modificarlo
 @app.route('/Home', methods=['GET'])
 def Home():
     if 'id_medicos' in session:
@@ -99,7 +101,7 @@ def Home():
 #--------------------------------------------------------------------------------------------------------
 #Funcion dos en uno Agregar un medico y abrir la plantilla para ingresar un medico
 #Falta agregar lo de verificar contrasenia, no repetir RFC
-#Falta un campo para agregar la cedula
+#Ya se muestra en logs #########
 @app.route('/AgregarMedicos', methods=['GET', 'POST'])
 def AgregarMedicos():
     if session.get('admin_permision') == 1 and 'id_medicos' in session:
@@ -116,6 +118,8 @@ def AgregarMedicos():
 
             # Conectar a la base de datos e insertar los datos
             cursor = mysql.connection.cursor()
+            #id del medico para el logs
+            cursor.execute('SET @id_medico = %s', ( session['id_medicos'],))
             # Llamar al procedimiento almacenado
             cursor.callproc('sp_RegistrarMedico', (nombre, apellidosp, apellidosm, correo, contrasenia, RFC, idrol, adminp, cedula))
             # Confirmar la transacción
@@ -166,6 +170,7 @@ def Expedientes():
 
 # --------------------------------------------------------------------------------------------------------
 # Funcion dos en uno
+#Ya se agrega en logs
 @app.route('/AgregarPaciente', methods=['GET', 'POST'])
 def AgregarPaciente():
     if 'id_medicos' not in session:
@@ -204,6 +209,7 @@ def AgregarPaciente():
             return "Formato de fecha no válido"
         # Ejecutar el procedimiento almacenado
         cursor = mysql.connection.cursor()
+        cursor.execute('SET @id_medico = %s', (session['id_medicos'],))
         # Llamada al procedimiento almacenado
         cursor.callproc('sp_ingresarExpediente', [
             nombre,
@@ -229,12 +235,14 @@ def AgregarPaciente():
 
 # --------------------------------------------------------------------------------------------------------
 #Actualizar Expedientes
+#Ya se actualiza logs
 @app.route('/ActualizarExpediente/<int:idExp>', methods=['GET', 'POST'])
 def ActualizarExpediente(idExp):
     if 'id_medicos' not in session:
         return redirect(url_for('index'))
 
     cursor = mysql.connection.cursor()
+    cursor.execute('SET @id_medico = %s', (session['id_medicos'],))
 
 #medicos obtenidos ADMIN
     if session.get('admin_permision') == 1:
@@ -301,6 +309,7 @@ def ActualizarExpediente(idExp):
 
 # --------------------------------------------------------------------------------------------------------
 #Actualizar medicos
+#Ya se realiza logs
 @app.route('/ActualizarMedico/<int:idMedico>', methods=['GET', 'POST'])
 def ActualizarMedico(idMedico):
     if 'id_medicos' not in session:
@@ -311,6 +320,7 @@ def ActualizarMedico(idMedico):
 
     cursor = mysql.connection.cursor()
 
+    cursor.execute('SET @id_medico = %s', (session['id_medicos'],))
     query = '''
     SELECT id_medicos, nombres, apellidos_p, apellidos_m, correo, 
     RFC, cedula, id_rol, admin_permision 
@@ -345,6 +355,7 @@ def ActualizarMedico(idMedico):
         # Encriptar la contraseña antes de guardarla (debes implementar la encriptación)
 
         cursor = mysql.connection.cursor()
+        cursor.execute('SET @id_medico = %s', (session['id_medicos'],))
         cursor.execute('''
             UPDATE medicos
             SET nombres=%s, apellidos_p=%s, apellidos_m=%s, correo=%s, 
@@ -652,6 +663,69 @@ def updateReceta(idReceta):
 
 
 
+#--------------------------------------------------------------------------------------------------------
+#borrar medico
+#Ya tiene funcion de logs
+@app.route('/borrar_medico/<int:idMedico>', methods=['GET', 'POST'])
+def borrar_medico(idMedico):
+    if 'id_medicos' in session and session.get('admin_permision') == 1:  # Verifica si hay sesión y permisos
+        if idMedico == session['id_medicos']:  # Verifica si el ID del médico es el mismo que el ID del usuario
+            flash('No puedes eliminar tu propia cuenta', 'danger')  # Mensaje de error
+            return redirect(url_for('Home'))  # Redirige al panel principal
+        try:
+            cursor = mysql.connection.cursor()
+            cursor.execute('SET @id_medico = %s', (session['id_medicos'],))
+            cursor.callproc('sp_borrarMedico', [idMedico])
+            mysql.connection.commit()
+            cursor.close()
+            flash('El médico ha sido eliminado correctamente', 'success')
+        except Exception as e:
+            mysql.connection.rollback()
+            cursor.close()
+            flash(f'Error al eliminar el médico: {str(e)}', 'danger')  # Mensaje de error en caso de excepción
+        return redirect(url_for('Home'))
+    else:
+        return redirect(url_for('index'))  # Redirige al inicio si no hay permisos
+
+#--------------------------------------------------------------------------------------------------------
+
+
+
+#--------------------------------------------------------------------------------------------------------
+@app.route('/borrarExpediente/<int:idExp>', methods=['GET', 'POST'])
+def borrarExpediente(idExp):
+    if 'id_medicos' in session:
+        try:
+            idMed = session['id_medicos']
+            cursor = mysql.connection.cursor()
+            cursor.execute('SET @id_medico = %s', (idMed,))
+            cursor.callproc('borrarExpedientes', [idExp])
+            mysql.connection.commit()
+            cursor.close()
+
+        except Exception as e:
+            mysql.connection.rollback()  # Deshace la transacción en caso de error
+            flash(f'Ocurrió un error al intentar eliminar el expediente: {str(e)}', 'danger')
+        finally:
+            cursor.close()
+
+        if 'id_medicos' in session and session.get('admin_permision') == 1:
+            return redirect(url_for('Expedientes'))
+
+        else:
+            return redirect(url_for('Home'))
+    else:
+        return redirect(url_for('index'))  # Redirige al inicio si no hay permisos
+
+#--------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 
@@ -670,8 +744,6 @@ def cerrar_sesion():
     # Redirigir a la página de inicio
     return redirect(url_for('index'))
 #--------------------------------------------------------------------------------------------------------
-
-
 
 
 

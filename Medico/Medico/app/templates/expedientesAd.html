@@ -113,6 +113,11 @@
             background-color: #64B5F6; /* Slightly darker pastel blue */
         }
     </style>
+    <script>
+        function confirmDelete() {
+            return confirm('¿Estás seguro de que deseas eliminar este expediente? Esta acción no se puede deshacer.');
+        }
+    </script>
 </head>
 <body>
 
@@ -140,7 +145,7 @@
                 <tr>
                     <th>Fecha de nacimiento</th>
                     <th>Nombre del Paciente</th>
-                    <th>Diagnóstico</th>
+                    <th>Expedientes</th>
                     <th>Mostrar</th>
                     <th>Acciones</th>
                     <th>Recetas</th>
@@ -151,19 +156,20 @@
             <tr>
                 <td>{{ paciente[4] }}</td>
                 <td>{{ paciente[1] }} {{ paciente[2] }} {{ paciente[3] }}</td>
-                <td>{{ paciente.diagnostico }}</td>
+
+                <td>
+                    <a href="{{ url_for('borrarExpediente', idExp=paciente[0]) }}" class="action-button" onclick="return confirmDelete();">Borrar</a>
+                </td>
 
                 <td>
                 <div class="action-buttons">
                     {% if paciente and paciente[6] %}
                         <a href="{{ url_for('mostrarReceta', idRece=paciente[6]) }}" class="action-button">Ver Receta</a>
                     {% else %}
-                        <a href="#" class="action-button disabled">Sin receta</a>  <!-- O alguna otra acción -->
+                        <a href="#" class="action-button disabled">Sin receta</a>
                     {% endif %}
                 </div>
                 </td>
-
-
 
                 <td>
                     <div class="action-buttons">

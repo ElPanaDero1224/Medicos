@@ -126,6 +126,14 @@
 </head>
 <body>
 
+    <script>
+        function confirmDelete(url) {
+            if (confirm("¿Estás seguro de que deseas borrar este médico?")) {
+                window.location.href = url;
+            }
+        }
+    </script>
+
     <header>
         <nav>
             <ul>
@@ -169,7 +177,7 @@
                 <td>
                     <div class="action-buttons">
                         <a href="{{ url_for('ActualizarMedico', idMedico=medico[0]) }}" class="action-button">Modificar</a>
-                        <button class="action-button delete-button">Borrar</button>
+                        <a class="action-button delete-button" href="#" onclick="confirmDelete('{{ url_for('borrar_medico', idMedico=medico[0]) }}')">Borrar</a>
                     </div>
                 </td>
             </tr>
